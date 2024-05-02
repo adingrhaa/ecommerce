@@ -49,8 +49,6 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama_kategori' => 'required',
-            'deskripsi' => 'required',
-            'gambar' => 'required|image|mimes:jpg,png,webp'
         ]);
  
         if ($validator->fails()){
@@ -61,15 +59,7 @@ class CategoryController extends Controller
         };
  
         $input = $request->all();
- 
-        if ($request->has('gambar')){
-            $gambar = $request->file('gambar');
-            $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
-            $gambar->move('uploads', $nama_gambar);
-            $input['gambar'] = $nama_gambar;
-        } 
        
- 
         $category = Category::create($input);
  
         return response()->json([
@@ -112,9 +102,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validator = Validator::make($request->all(), [
-            'nama_kategori' => 'required',
-            'deskripsi' => 'required',
-           
+            'nama_kategori' => 'required',           
         ]);
    
         if ($validator->fails()){
@@ -125,18 +113,6 @@ class CategoryController extends Controller
         }
    
         $input = $request->all();
-   
-        if ($request->has('gambar')) {
-            File::delete('uploads/' . $category->gambar);
-            // Mengunggah gambar yang baru
-            $gambar = $request->file('gambar');
-            $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
-            $gambar->move('uploads', $nama_gambar);
-            $input['gambar'] = $nama_gambar;
-        } else {
-            // Jika tidak ada gambar baru, hapus informasi gambar dari input
-            unset($input['gambar']);
-        }
    
         // Memperbarui data kategori
         $category->update($input);
