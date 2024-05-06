@@ -60,51 +60,51 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login_member(Request $request){
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+    // public function login_member(Request $request){
+    //     $validator = Validator::make($request->all(), [
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
     
-        if ($validator->fails()){
-            return response()->json(
-                $validator->errors(),
-                422
-            );
-        };
+    //     if ($validator->fails()){
+    //         return response()->json(
+    //             $validator->errors(),
+    //             422
+    //         );
+    //     };
 
         
-        $member = Member::where('email', $request->email)->first();
-        if($member){
+    //     $member = Member::where('email', $request->email)->first();
+    //     if($member){
 
-            if (Hash::check($request->password, $member->password)) {
-                $request->session()->regenerate();  //ketika menggunakan web {nyalakan}
-                return response()->json([
-                    'message' => 'success',
-                    'data' => $member
-                ]);
-            }else{
-                return response()->json([
-                    'message' => 'failed',
-                    'data' => 'password is wrong'
-                ]);
-            }
-        }else{
-            return response()->json([
-                'message' => 'failed',
-                'data' => 'email is wrong'
-            ]);
-        }
-    }
+    //         if (Hash::check($request->password, $member->password)) {
+    //             // $request->session()->regenerate();  //ketika menggunakan web {nyalakan}
+    //             return response()->json([
+    //                 'message' => 'success',
+    //                 'data' => $member
+    //             ]);
+    //         }else{
+    //             return response()->json([
+    //                 'message' => 'failed',
+    //                 'data' => 'password is wrong'
+    //             ]);
+    //         }
+    //     }else{
+    //         return response()->json([
+    //             'message' => 'failed',
+    //             'data' => 'email is wrong'
+    //         ]);
+    //     }
+    // }
 
     public function logout(){
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function logout_member(){
-        Session::flush();
+    // public function logout_member(){
+    //     Session::flush();
 
-        redirect('/login');
-    }
+    //     redirect('/login');
+    // }
 }    
