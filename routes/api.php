@@ -26,8 +26,8 @@ Route::group([
     // Route::post('login', [AuthController::class, 'login_member']); //ketika menggunakan api {nyalakan}
 });
 
-Route::get('products', [ProductController::class, 'index'])->middleware(['auth:sanctum']);
-Route::get('products/{products}', [ProductController::class, 'show'])->middleware(['auth:sanctum']);
+// Route::get('products', [ProductController::class, 'index'])->middleware(['auth:sanctum']);
+// Route::get('products/{products}', [ProductController::class, 'show'])->middleware(['auth:sanctum']);
 
 Route::post('login', [AuthenticationController::class, 'login_member']);
 Route::get('logout', [AuthenticationController::class, 'logout_member'])->middleware(['auth:sanctum']);
@@ -41,7 +41,7 @@ Route::group([
         'categories' => CategoryController::class,
         'subcategories' => SubcategoryController::class,
         'sliders' => SliderController::class,
-        // 'products' => ProductController::class,
+        'products' => ProductController::class,
         'members' => MemberController::class,
         'testimonis' => TestimoniController::class,
         'reviews' => ReviewController::class,
