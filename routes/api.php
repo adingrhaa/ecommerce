@@ -13,6 +13,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\CheckoutinformationController;
 
 Route::group([
     'middleware' => 'api',
@@ -45,7 +46,8 @@ Route::group([
         'members' => MemberController::class,
         'testimonis' => TestimoniController::class,
         'reviews' => ReviewController::class,
-        'orders' => OrderController::class
+        'orders' => OrderController::class,
+        'checkout_informations' => CheckoutInformationController::class
     ]);
 
     Route::get('order/dikonfirmasi', [OrderController::class, 'dikonfirmasi']);
