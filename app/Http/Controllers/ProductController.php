@@ -49,17 +49,12 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_kategori' => 'required',
-            'id_subkategori' => 'required',
             'nama_barang' => 'required',
             'gambar' => 'required|image|mimes:jpg,png,webp',
             'deskripsi' => 'required',
             'harga' => 'required',
-            'diskon' => 'required',
             'bahan' => 'required',
             'tags' => 'required',
-            'sku' => 'required',
-            'ukuran' => 'required',
-            'warna' => 'required'
         ]);
  
         if ($validator->fails()){
@@ -125,17 +120,12 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_kategori' => 'required',
-            'id_subkategori' => 'required',
             'nama_barang' => 'required',
             'gambar' => 'required|image|mimes:jpg,png,webp',
             'deskripsi' => 'required',
             'harga' => 'required',
-            'diskon' => 'required',
             'bahan' => 'required',
             'tags' => 'required',
-            'sku' => 'required',
-            'ukuran' => 'required',
-            'warna' => 'required'
         ]);
    
         if ($validator->fails()){
