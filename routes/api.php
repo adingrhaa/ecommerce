@@ -13,7 +13,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\CheckoutinformationController;
+use App\Http\Controllers\CheckoutInformationController;
 
 Route::group([
     'middleware' => 'api',

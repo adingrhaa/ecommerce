@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Psy\CodeCleaner\ReturnTypePass;
 
-class CheckoutinformationController extends Controller
+class CheckoutInformationController extends Controller
 {
 
     public function __construct(){
