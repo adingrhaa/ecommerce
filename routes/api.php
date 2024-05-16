@@ -35,6 +35,7 @@ Route::post('login', [AuthenticationController::class, 'login_member']);
 Route::get('logout', [AuthenticationController::class, 'logout_member'])->middleware(['auth:sanctum']);
 Route::get('me', [AuthenticationController::class, 'me'])->middleware(['auth:sanctum']);
 
+Route::get('products/search',[ProductController::class,'search']);
 
 Route::group([
     'middleware' => 'api'

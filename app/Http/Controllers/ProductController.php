@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
  
     public function __construct(){
-        $this->middleware('auth:api')->except(['index']);
+        $this->middleware('auth:api')->except(['index', 'search']);
     }
     /**
      * Display a listing of the resource.
@@ -182,5 +182,24 @@ class ProductController extends Controller
         'message' => 'success'
     ]);
 }
- 
+    
+    public function search(Request $request)
+    {
+        $query = Product::query();
+    
+        if ($request->has('id_kategori')) {
+            $query->where('id_kategori', $request->id_kategori);
+        }
+    
+        if ($request->has('nama_barang')) {
+            $query->where('nama_barang', 'like', '%' . $request->nama_barang . '%');
+        }
+    
+        $results = $query->get();
+    
+        return response()->json([
+            'data' => $results
+        ]);
+    }
+
 }

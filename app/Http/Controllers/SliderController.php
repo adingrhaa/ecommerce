@@ -65,8 +65,11 @@ class SliderController extends Controller // (a) Menggunakan SliderController
         if ($request->has('gambar')){
             $gambar = $request->file('gambar');
             $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
-            $gambar->move('uploads', $nama_gambar);
+            $path = $gambar->storeAs('public/images', $nama_gambar);
             $input['gambar'] = $nama_gambar;
+   
+            $url_gambar = asset('storage/images/' . $nama_gambar);
+            $input['url_gambar'] = $url_gambar;
         } 
 
 
@@ -126,12 +129,16 @@ class SliderController extends Controller // (a) Menggunakan SliderController
 
         $input = $request->all();
 
-        if ($request->has('gambar')) {
-            File::delete('uploads/' . $slider->gambar);
+        if ($request->hasFile('gambar')) {
+            // Menghapus gambar yang sudah ada
+            if ($slider->gambar) {
+                File::delete(public_path('storage/images/' . $slider->gambar));
+            }
+   
             // Mengunggah gambar yang baru
             $gambar = $request->file('gambar');
             $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
-            $gambar->move('uploads', $nama_gambar);
+            $path = $gambar->storeAs('public/images', $nama_gambar);
             $input['gambar'] = $nama_gambar;
         } else {
             // Jika tidak ada gambar baru, hapus informasi gambar dari input
@@ -153,16 +160,19 @@ class SliderController extends Controller // (a) Menggunakan SliderController
      * @param  \App\Models\Slider  $slider // (a) Menggunakan Slider
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Slider $slider) // (a) Menggunakan Slider
-    {
-        File::delete('uploads/' . $slider->gambar);
-
-        // Hapus data slider dari database
-        $slider->delete();
-
-        return response()->json([
-            'message' => 'success'
-        ]);
+    public function destroy(Slider $slider)
+{
+    if ($slider->gambar) {
+        // Hapus gambar terkait jika ada
+        File::delete(public_path('storage/images/' . $slider->gambar));
     }
+ 
+    // Hapus data kategori dari database
+    $slider->delete();
+ 
+    return response()->json([
+        'message' => 'success'
+    ]);
+}
 
 }
