@@ -15,6 +15,8 @@ use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CheckoutInformationController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductCountController;
+
 
 Route::group([
     'middleware' => 'api',
@@ -36,6 +38,8 @@ Route::get('logout', [AuthenticationController::class, 'logout_member'])->middle
 Route::get('me', [AuthenticationController::class, 'me'])->middleware(['auth:sanctum']);
 
 Route::get('products/search',[ProductController::class,'search']);
+
+Route::get('count_products', [ProductCountController::class, 'countProducts']);
 
 Route::group([
     'middleware' => 'api'
