@@ -4,20 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function login(){
-        $credentials = request(['email', 'password']);
+    public function login(Request $request){
+        $credentials = $request->only(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['email or password is wrong'], 401);
+            return response()->json(['error' => 'email or password is wrong'], 401);
         }
 
+        $user = auth()->user();
+        $customClaims = ['email' => $user->email, 'id' => $user->id];
+
+        $token = JWTAuth::claims($customClaims)->attempt($credentials);
+ 
         return $this->respondWithToken($token);
     }
 
