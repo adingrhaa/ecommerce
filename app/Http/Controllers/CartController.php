@@ -48,7 +48,9 @@ class CartController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_produk' => 'required',
-            'id_member' => 'required'
+            'id_member' => 'required',
+            'nama_barang' => 'required',
+            'harga' => 'required'
         ]);
 
         if ($validator->fails()){
@@ -59,6 +61,16 @@ class CartController extends Controller
         };
 
         $input = $request->all();
+
+        if ($request->has('gambar')){
+            $gambar = $request->file('gambar');
+            $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
+            $path = $gambar->storeAs('public/images', $nama_gambar);
+            $input['gambar'] = $nama_gambar;
+   
+            $url_gambar = asset('storage/images/' . $nama_gambar);
+            $input['url_gambar'] = $url_gambar;
+        }
        
         $cart = Cart::create($input);
 
@@ -103,7 +115,10 @@ class CartController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_produk' => 'required',
-            'id_member' => 'required'           
+            'id_member' => 'required',
+            'nama_barang' => 'required',
+            'harga' => 'required'
+                       
         ]);
    
         if ($validator->fails()){
@@ -114,6 +129,22 @@ class CartController extends Controller
         }
    
         $input = $request->all();
+
+        if ($request->hasFile('gambar')) {
+            // Menghapus gambar yang sudah ada
+            if ($cart->gambar) {
+                File::delete(public_path('storage/images/' . $cart->gambar));
+            }
+   
+            // Mengunggah gambar yang baru
+            $gambar = $request->file('gambar');
+            $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
+            $path = $gambar->storeAs('public/images', $nama_gambar);
+            $input['gambar'] = $nama_gambar;
+        } else {
+            // Jika tidak ada gambar baru, hapus informasi gambar dari input
+            unset($input['gambar']);
+        }
    
         // Memperbarui data keranjang
         $cart->update($input);
@@ -132,6 +163,11 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
+        if ($cart->gambar) {
+            // Hapus gambar terkait jika ada
+            File::delete(public_path('storage/images/' . $cart->gambar));
+        }
+
         File::delete('uploads/' . $cart->gambar);
  
         // Hapus data keranjang dari database
