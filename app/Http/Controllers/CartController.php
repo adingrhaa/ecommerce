@@ -18,10 +18,16 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
 
     {
-        $carts = Cart::all();
+        $id_member = $request->query('id_member');
+
+        if ($id_member) {
+            $carts = Cart::where('id_member', $id_member)->get();
+        } else {
+            $carts = Cart::all();
+        }
 
         return response()->json([
             'data' => $carts
