@@ -64,7 +64,7 @@ class CartController extends Controller
 
         if ($request->has('gambar')){
             $gambar = $request->file('gambar');
-            $nama_gambar = time() . rand(1,9) . '.' . $gambar->getClientOriginalExtension();
+            $nama_gambar = time() . rand(1,9) . '.' . optional($gambar)->getClientOriginalExtension();
             $path = $gambar->storeAs('public/images', $nama_gambar);
             $input['gambar'] = $nama_gambar;
    
