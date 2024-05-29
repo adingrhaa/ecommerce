@@ -200,26 +200,27 @@ class CartController extends Controller
     } else {
         $id_member = $request->query('id_member');
         $id_produk = $request->query('id_produk');
-
+    
         if ($id_member && $id_produk) {
-            // Cari cart berdasarkan id_member dan id_produk
-            $cart = Cart::where('id_member', $id_member)
+            // Cari semua data dengan id_member dan id_produk yang sesuai
+            $carts = Cart::where('id_member', $id_member)
                         ->where('id_produk', $id_produk)
-                        ->first();
-
-            if ($cart) {
-                if ($cart->gambar) {
-                    File::delete(public_path('storage/images/' . $cart->gambar));
+                        ->get();
+    
+            if ($carts->isNotEmpty()) {
+                foreach ($carts as $cart) {
+                    if ($cart->gambar) {
+                        File::delete(public_path('storage/images/' . $cart->gambar));
+                    }
+                    $cart->delete();
                 }
-
-                $cart->delete();
-                return response()->json(['message' => 'Cart deleted successfully'], 200);
+                return response()->json(['message' => 'Carts deleted successfully'], 200);
             } else {
-                return response()->json(['error' => 'Cart not found'], 404);
+                return response()->json(['error' => 'Carts not found'], 404);
             }
         } else {
             // Jika tidak ada parameter atau parameter tidak lengkap, kembalikan pesan error
-            return response()->json(['error' => 'Either id, or both id_member and id_produk are required'], 400);
+            return response()->json(['error' => 'Both id_member and id_produk are required'], 400);
         }
     }
 }
