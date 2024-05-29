@@ -180,22 +180,50 @@ class CartController extends Controller
      * @param  \App\Models\Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cart $cart)
-    {
-        if ($cart->gambar) {
-            // Hapus gambar terkait jika ada
-            File::delete(public_path('storage/images/' . $cart->gambar));
-        }
+    public function destroy(Request $request, $id = null)
+{
+    if ($id) {
+        // Hapus berdasarkan id
+        $cart = Cart::find($id);
 
-        File::delete('uploads/' . $cart->gambar);
- 
-        // Hapus data keranjang dari database
-        $cart->delete();
- 
-        return response()->json([
-            'message' => 'success'
-        ]);
+        if ($cart) {
+            if ($cart->gambar) {
+                File::delete(public_path('storage/images/' . $cart->gambar));
+            }
+
+            $cart->delete();
+
+            return response()->json(['message' => 'Cart deleted successfully'], 200);
+        } else {
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
+    } else {
+        $id_member = $request->query('id_member');
+        $id_produk = $request->query('id_produk');
+
+        if ($id_member && $id_produk) {
+            // Cari cart berdasarkan id_member dan id_produk
+            $cart = Cart::where('id_member', $id_member)
+                        ->where('id_produk', $id_produk)
+                        ->first();
+
+            if ($cart) {
+                if ($cart->gambar) {
+                    File::delete(public_path('storage/images/' . $cart->gambar));
+                }
+
+                $cart->delete();
+                return response()->json(['message' => 'Cart deleted successfully'], 200);
+            } else {
+                return response()->json(['error' => 'Cart not found'], 404);
+            }
+        } else {
+            // Jika tidak ada parameter atau parameter tidak lengkap, kembalikan pesan error
+            return response()->json(['error' => 'Either id, or both id_member and id_produk are required'], 400);
+        }
     }
+}
+
 
 }
 

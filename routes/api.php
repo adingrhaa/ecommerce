@@ -41,6 +41,8 @@ Route::get('products/search',[ProductController::class,'search']);
 
 Route::get('count_products', [ProductCountController::class, 'countProducts']);
 
+Route::delete('/carts/{id?}', [CartController::class, 'destroy']);
+
 Route::group([
     'middleware' => 'api'
 ], function(){
@@ -56,13 +58,4 @@ Route::group([
         'checkout_informations' => CheckoutInformationController::class,
         'carts' => CartController::class,
     ]);
-
-    Route::get('order/dikonfirmasi', [OrderController::class, 'dikonfirmasi']);
-    Route::get('order/dikemas', [OrderController::class, 'dikemas']);
-    Route::get('order/dikirim', [OrderController::class, 'dikirim']);
-    Route::get('order/diterima', [OrderController::class, 'diterima']);
-    Route::get('order/selesai', [OrderController::class, 'selesai']);
-    Route::post('order/ubah_status/{order}', [OrderController::class, 'ubah_status']);
-
-    Route::get('reports', [ReportController::class, 'index']);
 });
