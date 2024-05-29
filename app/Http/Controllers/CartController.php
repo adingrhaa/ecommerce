@@ -22,12 +22,25 @@ class CartController extends Controller
 
     {
         $id_member = $request->query('id_member');
+        $id_produk = $request->query('id_produk');
 
-        if ($id_member) {
+        if ($id_member && $id_produk) {
+            // Jika kedua parameter ada, cari berdasarkan keduanya
+            $carts = Cart::where('id_member', $id_member)
+                        ->where('id_produk', $id_produk)
+                        ->get();
+        } elseif ($id_member) {
+            // Jika hanya id_member ada, cari berdasarkan id_member
             $carts = Cart::where('id_member', $id_member)->get();
-        } else {
+        } elseif (!$id_member && !$id_produk) {
+            // Jika tidak ada parameter, tampilkan semua data
             $carts = Cart::all();
+        } else {
+            // Jika hanya salah satu parameter yang ada, kembalikan error
+            return response()->json(['error' => 'Both id_member and id_produk are required'], 400);
         }
+
+        return response()->json($carts);
 
         return response()->json([
             'data' => $carts
