@@ -117,9 +117,9 @@ class MemberController extends Controller
             'gender' => 'required|in:male,female',
             'detail_alamat' => 'required',
             'no_hp' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|same:konfirmasi_password',
-            'konfirmasi_password' => 'required|same:password',
+            'email' => 'email',
+            'password' => 'same:konfirmasi_password',
+            'konfirmasi_password' => 'same:password',
         ]);
    
         if ($validator->fails()){
