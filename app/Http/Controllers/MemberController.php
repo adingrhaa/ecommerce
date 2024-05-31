@@ -12,7 +12,7 @@ class MemberController extends Controller
 {
  
     public function __construct(){
-        $this->middleware('auth:api')->except(['index','show']);
+        $this->middleware('auth:sanctum')->except(['index','show']);
     }
     /**
      * Display a listing of the resource.
