@@ -44,14 +44,6 @@ Route::get('count_products', [ProductCountController::class, 'countProducts']);
 Route::delete('/carts/{id?}', [CartController::class, 'destroy']);
 
 Route::group([
-    'middleware' => 'sanctum'
-], function(){
-    Route::resources([
-        'members' => MemberController::class,
-    ]);
-});
-
-Route::group([
     'middleware' => 'api'
 ], function(){
     Route::resources([
@@ -60,6 +52,7 @@ Route::group([
         'sliders' => SliderController::class,
         'products' => ProductController::class,
         'testimonis' => TestimoniController::class,
+        'members' => MemberController::class,
         'reviews' => ReviewController::class,
         'orders' => OrderController::class,
         'checkout_informations' => CheckoutInformationController::class,
