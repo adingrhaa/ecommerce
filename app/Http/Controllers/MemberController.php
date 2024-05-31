@@ -12,7 +12,7 @@ class MemberController extends Controller
 {
  
     public function __construct(){
-        $this->middleware('auth:api')->except(['index']);
+        $this->middleware('auth:api')->except(['index','show']);
     }
     /**
      * Display a listing of the resource.
@@ -130,6 +130,8 @@ class MemberController extends Controller
         }
    
         $input = $request->all();
+        $input['password'] = bcrypt($request->password);
+        unset($input['konfirmasi_password']);
    
         // Memperbarui data member
         $member->update($input);
