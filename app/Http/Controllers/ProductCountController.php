@@ -31,7 +31,11 @@ class ProductCountController extends Controller
             $total_products += $productCount;
         }
 
+        // Menghitung total member
+        $total_members = Member::count();
+
         $category_count['total_products'] = $total_products;
+        $category_count['total_members'] = $total_members;
 
         return response()->json($category_count);
     }
