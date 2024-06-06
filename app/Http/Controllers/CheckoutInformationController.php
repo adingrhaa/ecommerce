@@ -12,7 +12,7 @@ class CheckoutInformationController extends Controller
 {
 
     public function __construct(){
-        $this->middleware('auth:sanctum')->except(['index']);
+        $this->middleware('auth:sanctum')->except(['index', 'search',]);
     }
     /**
      * Display a listing of the resource.
@@ -164,5 +164,58 @@ class CheckoutInformationController extends Controller
         'message' => 'success'
     ]);
 }
+
+    public function search(Request $request)
+    {
+        $query = CheckoutInformation::query();
+
+        if ($request->has('fullname')) {
+            $query->where('fullname', 'like', '%' . $request->fullname . '%');
+        }
+
+        if ($request->has('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        if ($request->has('no_hp')) {
+            $query->where('no_hp', 'like', '%' . $request->no_hp . '%');
+        }
+
+        if ($request->has('provinsi')) {
+            $query->where('provinsi', 'like', '%' . $request->provinsi . '%');
+        }
+
+        if ($request->has('kota_kabupaten')) {
+            $query->where('kota_kabupaten', 'like', '%' . $request->kota_kabupaten . '%');
+        }
+
+        if ($request->has('kecamatan')) {
+            $query->where('kecamatan', 'like', '%' . $request->kecamatan . '%');
+        }
+
+        if ($request->has('kode_pos')) {
+            $query->where('kode_pos', 'like', '%' . $request->kode_pos . '%');
+        }
+
+        if ($request->has('payment_method')) {
+            $query->where('payment_method', 'like', '%' . $request->payment_method . '%');
+        }
+
+        if ($request->has('delivery')) {
+            $query->where('delivery', 'like', '%' . $request->delivery . '%');
+        }
+
+        if ($request->has('ringkasan_belanja')) {
+            $query->where('ringkasan_belanja', 'like', '%' . $request->ringkasan_belanja . '%');
+        }
+
+        if ($request->has('total_harga')) {
+            $query->where('total_harga', 'like', '%' . $request->total_harga . '%');
+        }
+
+        $results = $query->get();
+
+        return response()->json($results);
+    }
 
 }
