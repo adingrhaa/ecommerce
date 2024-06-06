@@ -39,6 +39,8 @@ Route::get('me', [AuthenticationController::class, 'me'])->middleware(['auth:san
 
 Route::get('products/search',[ProductController::class,'search']);
 
+Route::get('checkout/search', [CheckoutInformationController::class, 'search']);
+
 Route::get('count_products', [ProductCountController::class, 'countProducts']);
 
 Route::delete('/carts/{id?}', [CartController::class, 'destroy']);

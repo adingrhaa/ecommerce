@@ -160,7 +160,7 @@ class ProductController extends Controller
             $query->where('nama_barang', 'like', '%' . $request->nama_barang . '%');
         }
 
-        $results = $query->paginate(10); // Menggunakan pagination pada hasil pencarian
+        $results = $query->get(); 
 
         return response()->json($results);
     }
