@@ -23,8 +23,10 @@ class MemberController extends Controller
  
     {
         $members = Member::all();
+        $total_members = Member::count();
  
         return response()->json([
+            'total_members' => $total_members,
             'data' => $members
         ]);
     }
@@ -84,11 +86,12 @@ class MemberController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Member $member)
-    {
-        return response()->json([
-            'data' => $member 
-        ]);
-    }
+{
+
+    return response()->json([
+        'data' => $member
+    ]);
+}
  
     /**
      * Show the form for editing the specified resource.
