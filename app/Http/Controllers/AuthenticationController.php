@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Member;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthenticationController extends Controller
 {
+
     public function login_member(Request $request){
         $request->validate([
             'email' => 'required|email',
@@ -23,6 +25,12 @@ class AuthenticationController extends Controller
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
+        }
+
+        if ($user->blocked_until && Carbon::now()->lessThan($user->blocked_until)) {
+            return response()->json([
+                'message' => 'Your account has been blocked until ' . $user->blocked_until->format('Y-m-d H:i:s')
+            ], 403);
         }
     
         // Set status is_active menjadi true
@@ -48,7 +56,8 @@ class AuthenticationController extends Controller
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 
-    public function me(Request $request){
+    public function me(Request $request)
+    {
         return response()->json(Auth::user());
     }
 }
