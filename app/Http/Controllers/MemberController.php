@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
  
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Psy\CodeCleaner\ReturnTypePass;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
-use Psy\CodeCleaner\ReturnTypePass;
  
 class MemberController extends Controller
 {
@@ -158,5 +159,30 @@ class MemberController extends Controller
         'message' => 'success'
     ]);
 }
- 
+
+    public function blockMember($id)
+    {
+        $member = Member::find($id);
+        if (!$member) {
+            return response()->json(['message' => 'Member not found.'], 404);
+        }
+
+        $member->blocked_until = Carbon::now()->addSeconds(30); // Contoh: diblokir selama 7 hari
+        $member->save();
+
+        return response()->json(['message' => 'Member has been blocked successfully.']);
+    }
+
+    public function unblockMember($id)
+    {
+        $member = Member::find($id);
+        if (!$member) {
+            return response()->json(['message' => 'Member not found.'], 404);
+        }
+
+        $member->blocked_until = null; // Hapus status blokir
+        $member->save();
+
+        return response()->json(['message' => 'Member has been unblocked successfully.']);
+    }
 }
