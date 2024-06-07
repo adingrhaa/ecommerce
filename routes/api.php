@@ -34,8 +34,8 @@ Route::group([
 // Route::get('products/{products}', [ProductController::class, 'show'])->middleware(['auth:sanctum']);
 
 Route::post('login', [AuthenticationController::class, 'login_member']);
-Route::get('logout', [AuthenticationController::class, 'logout_member'])->middleware(['auth:sanctum']);
-Route::get('me', [AuthenticationController::class, 'me'])->middleware(['auth:sanctum']);
+Route::get('logout', [AuthenticationController::class, 'logout_member'])->middleware(['auth:sanctum', 'check.blocked']);
+Route::get('me', [AuthenticationController::class, 'me'])->middleware(['auth:sanctum', 'check.blocked']);
 
 Route::get('products/search',[ProductController::class,'search']);
 
@@ -60,4 +60,9 @@ Route::group([
         'checkout_informations' => CheckoutInformationController::class,
         'carts' => CartController::class,
     ]);
+});
+
+Route::middleware(['auth', 'check.blocked'])->group(function () {
+    Route::post('/members/block-member/{id}', [MemberController::class, 'blockMember'])->name('members.blockMember');
+    Route::post('/members/unblock-member/{id}', [MemberController::class, 'unblockMember'])->name('members.unblockMember');
 });
