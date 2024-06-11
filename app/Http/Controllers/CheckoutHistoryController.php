@@ -26,9 +26,8 @@ class CheckoutHistoryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'member_id' => 'required|exists:members,id',
-            'checkout_information_id' => 'required|exists:checkout_informations,id',
-            'ringkasan_belanja' => 'required',
+            'id_member' => 'required|exists:members,id',
+            'ringkasan_belanja' => 'required|array', // Ensure ringkasan_belanja is an array
             'total_harga' => 'required|numeric',
         ]);
 
@@ -36,7 +35,11 @@ class CheckoutHistoryController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $checkoutHistory = CheckoutHistory::create($request->all());
+        // Ensure ringkasan_belanja is stored as JSON
+        $requestData = $request->all();
+        $requestData['ringkasan_belanja'] = json_encode($request->input('ringkasan_belanja'));
+
+        $checkoutHistory = CheckoutHistory::create($requestData);
 
         return response()->json(['data' => $checkoutHistory], 201);
     }
@@ -49,9 +52,8 @@ class CheckoutHistoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'member_id' => 'required|exists:members,id',
-            'checkout_information_id' => 'required|exists:checkout_informations,id',
-            'ringkasan_belanja' => 'required',
+            'id_member' => 'required|exists:members,id',
+            'ringkasan_belanja' => 'required|array',
             'total_harga' => 'required|numeric',
         ]);
 
@@ -59,7 +61,11 @@ class CheckoutHistoryController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $checkoutHistory->update($request->all());
+        // Ensure ringkasan_belanja is stored as JSON
+        $requestData = $request->all();
+        $requestData['ringkasan_belanja'] = json_encode($request->input('ringkasan_belanja'));
+
+        $checkoutHistory->update($requestData);
 
         return response()->json(['data' => $checkoutHistory]);
     }
@@ -76,4 +82,3 @@ class CheckoutHistoryController extends Controller
         return response()->json(['message' => 'Checkout history deleted successfully']);
     }
 }
-
