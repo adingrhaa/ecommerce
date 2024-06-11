@@ -11,9 +11,7 @@ class Member extends Model
 {
     use HasFactory, HasApiTokens, Notifiable;
 
-    protected $fillable = [
-        'fullname', 'email', 'password', 'blocked_until'
-    ];
+    protected $guarded = [];
 
     protected $dates = ['blocked_until'];
 }

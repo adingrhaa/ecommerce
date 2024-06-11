@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CheckoutInformation;
 use Illuminate\Http\Request;
+use App\Models\CheckoutHistory;
+use App\Models\CheckoutInformation;
+use Psy\CodeCleaner\ReturnTypePass;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
-use Psy\CodeCleaner\ReturnTypePass;
 
 class CheckoutInformationController extends Controller
 {
@@ -46,39 +47,51 @@ class CheckoutInformationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'fullname' => 'required',
-            'email' => 'required',
-            'no_hp' => 'required',
-            'provinsi' => 'required',
-            'kota_kabupaten' => 'required',
-            'kecamatan' => 'required',
-            'kode_pos' => 'required',
-            'payment_method' => 'required|in:COD,E-Wallet,Bank',
-            'delivery' => 'required|in:Reguler,Cargo,Economy',
-            'ringkasan_belanja' => 'required',
-            'biaya_pengiriman' => 'required',
-            'biaya_admin' => 'required',
-            'total_harga' => 'required',
-        ]);
+{
+    // Validasi input
+    $validator = Validator::make($request->all(), [
+        'fullname' => 'required',
+        'email' => 'required',
+        'no_hp' => 'required',
+        'provinsi' => 'required',
+        'kota_kabupaten' => 'required',
+        'kecamatan' => 'required',
+        'kode_pos' => 'required',
+        'payment_method' => 'required|in:COD,E-Wallet,Bank',
+        'delivery' => 'required|in:Reguler,Cargo,Economy',
+        'ringkasan_belanja' => 'required',
+        'biaya_pengiriman' => 'required',
+        'biaya_admin' => 'required',
+        'total_harga' => 'required',
+        'id_member' => 'required'
+    ]);
 
-        if ($validator->fails()){
-            return response()->json(
-                $validator->errors(),
-                422
-            );
-        };
+    // Jika validasi gagal, kembalikan pesan error
+    if ($validator->fails()){
+        return response()->json(
+            $validator->errors(),
+            422
+        );
+    };
 
-        $input = $request->all();
+    // Simpan data checkout information
+    $checkoutInformation = CheckoutInformation::create($request->all());
 
-        $checkoutinformation = CheckoutInformation::create($input);
+    // Simpan riwayat checkout ke dalam tabel checkout_histories
+    CheckoutHistory::create([
+        'member_id' => $checkoutInformation->id_member,
+        'checkout_information_id' => $checkoutInformation->id,
+        'ringkasan_belanja' => $checkoutInformation->ringkasan_belanja,
+        'total_harga' => $checkoutInformation->total_harga
+        // Anda dapat menambahkan kolom lain yang perlu disimpan di sini
+    ]);
 
-        return response()->json([
-            'data' => $checkoutinformation
-        ]);
+    // Kembalikan respons JSON dengan data checkoutInformation
+    return response()->json([
+        'data' => $checkoutInformation
+    ]);
+}
 
-    }
 
     /**
      * Display the specified resource.

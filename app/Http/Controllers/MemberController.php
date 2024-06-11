@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\CheckoutInformation;
 use Psy\CodeCleaner\ReturnTypePass;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -184,5 +185,18 @@ class MemberController extends Controller
         $member->save();
 
         return response()->json(['message' => 'Member has been unblocked successfully.']);
+    }
+
+    public function checkoutHistory(Request $request)
+    {
+        // Ambil member yang sedang login
+        $member = $request->user();
+
+        // Ambil riwayat checkout milik member
+        $checkoutHistory = CheckoutInformation::where('id_member', $member->id)->get();
+
+        return response()->json([
+            'data' => $checkoutHistory
+        ]);
     }
 }
