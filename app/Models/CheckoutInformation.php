@@ -10,4 +10,8 @@ class CheckoutInformation extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'ringkasan_belanja' => 'array',
+    ];
 }
