@@ -23,68 +23,62 @@ class CheckoutInformationController extends Controller
 
     public function store(Request $request)
     {
-    $validator = Validator::make($request->all(), [
-        'fullname' => 'required',
-        'email' => 'required',
-        'no_hp' => 'required',
-        'provinsi' => 'required',
-        'kota_kabupaten' => 'required',
-        'kecamatan' => 'required',
-        'kode_pos' => 'required',
-        'payment_method' => 'required|in:COD,E-Wallet,Bank',
-        'delivery' => 'required|in:Reguler,Cargo,Economy',
-        'ringkasan_belanja' => 'required|array',
-        'ringkasan_belanja.*.id_produk' => 'required|exists:products,id',
-        'ringkasan_belanja.*.nama_barang' => 'required',
-        'ringkasan_belanja.*.jumlah' => 'required|integer|min:1',
-        'biaya_pengiriman' => 'required',
-        'biaya_admin' => 'required',
-        'total_harga' => 'required',
-        'id_member' => 'required|exists:members,id'
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json($validator->errors(), 422);
-    }
-
-    $requestData = $request->all();
-
-    $validatedRingkasanBelanja = array_map(function ($item) {
-        return [
-            'id_produk' => $item['id_produk'],
-            'nama_barang' => $item['nama_barang'],
-            'jumlah' => $item['jumlah']
-        ];
-    }, $request->ringkasan_belanja);
-
-    $requestData['ringkasan_belanja'] = json_encode($validatedRingkasanBelanja);
-
-    $checkoutInformation = CheckoutInformation::create($requestData);
-
-    $checkoutInformation->ringkasan_belanja = json_decode($checkoutInformation->ringkasan_belanja, true);
-
-    CheckoutHistory::create([
-        'id_member' => $checkoutInformation->id_member,
-        'ringkasan_belanja' => json_encode($checkoutInformation->ringkasan_belanja), // Encode to JSON
-        'total_harga' => $checkoutInformation->total_harga
-    ]);
-
-    return response()->json(['data' => $checkoutInformation]);
-    }
-
-    public function show($id)
-    {
-        $checkoutInformation = CheckoutInformation::find($id);
-
-        if (!$checkoutInformation) {
-            return response()->json(['message' => 'Checkout information not found'], 404);
+        $validator = Validator::make($request->all(), [
+            // Validasi yang lain
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
-
-        // Decode ringkasan_belanja from JSON string to array
-        $checkoutInformation->ringkasan_belanja = json_decode($checkoutInformation->ringkasan_belanja, true);
-
+    
+        $requestData = $request->all();
+    
+        $validatedRingkasanBelanja = array_map(function ($item) {
+            return [
+                'id_produk' => $item['id_produk'],
+                'nama_barang' => $item['nama_barang'],
+                'jumlah' => $item['jumlah']
+            ];
+        }, $request->ringkasan_belanja);
+    
+        $requestData['ringkasan_belanja'] = json_encode($validatedRingkasanBelanja);
+    
+        $checkoutInformation = CheckoutInformation::create($requestData);
+    
+        // Simpan data ke CheckoutHistory
+        CheckoutHistory::create([
+            'id_member' => $checkoutInformation->id_member,
+            'ringkasan_belanja' => $validatedRingkasanBelanja, // Simpan langsung sebagai array
+            'total_harga' => $checkoutInformation->total_harga
+        ]);
+    
+        // Decode ringkasan_belanja dari string JSON ke array
+        $ringkasanBelanjaArray = json_decode($checkoutInformation->ringkasan_belanja, true);
+    
+        if (is_null($ringkasanBelanjaArray)) {
+            return response()->json(['message' => 'Error decoding ringkasan_belanja field'], 500);
+        }
+    
+        // Update properti ringkasan_belanja dengan array
+        $checkoutInformation->ringkasan_belanja = $ringkasanBelanjaArray;
+    
+        // Respon
         return response()->json(['data' => $checkoutInformation]);
     }
+    
+    public function show($id)
+{
+    $checkoutinformation = CheckoutInformation::find($id);
+    
+    if (!$checkoutinformation) {
+        return response()->json(['message' => 'Checkout history not found'], 404);
+    }
+
+    $checkoutinformation->ringkasan_belanja = json_encode($checkoutinformation->ringkasan_belanja, true);
+
+    return response()->json(['data' => $checkoutinformation]);
+}
+
 
     public function update(Request $request, CheckoutInformation $checkoutinformation)
     {
