@@ -23,51 +23,53 @@ class CheckoutInformationController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'fullname' => 'required',
-            'email' => 'required',
-            'no_hp' => 'required',
-            'provinsi' => 'required',
-            'kota_kabupaten' => 'required',
-            'kecamatan' => 'required',
-            'kode_pos' => 'required',
-            'payment_method' => 'required|in:COD,E-Wallet,Bank',
-            'delivery' => 'required|in:Reguler,Cargo,Economy',
-            'ringkasan_belanja' => 'required|array',
-            'ringkasan_belanja.*.nama_barang' => 'required',
-            'ringkasan_belanja.*.jumlah' => 'required|integer|min:1',
-            'biaya_pengiriman' => 'required',
-            'biaya_admin' => 'required',
-            'total_harga' => 'required',
-            'id_member' => 'required|exists:members,id'
-        ]);
+    $validator = Validator::make($request->all(), [
+        'fullname' => 'required',
+        'email' => 'required',
+        'no_hp' => 'required',
+        'provinsi' => 'required',
+        'kota_kabupaten' => 'required',
+        'kecamatan' => 'required',
+        'kode_pos' => 'required',
+        'payment_method' => 'required|in:COD,E-Wallet,Bank',
+        'delivery' => 'required|in:Reguler,Cargo,Economy',
+        'ringkasan_belanja' => 'required|array',
+        'ringkasan_belanja.*.id_produk' => 'required|exists:products,id',
+        'ringkasan_belanja.*.nama_barang' => 'required',
+        'ringkasan_belanja.*.jumlah' => 'required|integer|min:1',
+        'biaya_pengiriman' => 'required',
+        'biaya_admin' => 'required',
+        'total_harga' => 'required',
+        'id_member' => 'required|exists:members,id'
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
 
-        $requestData = $request->all();
+    $requestData = $request->all();
 
-        $validatedRingkasanBelanja = array_map(function ($item) {
-            return [
-                'nama_barang' => $item['nama_barang'],
-                'jumlah' => $item['jumlah']
-            ];
-        }, $request->ringkasan_belanja);
+    $validatedRingkasanBelanja = array_map(function ($item) {
+        return [
+            'id_produk' => $item['id_produk'],
+            'nama_barang' => $item['nama_barang'],
+            'jumlah' => $item['jumlah']
+        ];
+    }, $request->ringkasan_belanja);
 
-        $requestData['ringkasan_belanja'] = json_encode($validatedRingkasanBelanja);
+    $requestData['ringkasan_belanja'] = json_encode($validatedRingkasanBelanja);
 
-        $checkoutInformation = CheckoutInformation::create($requestData);
+    $checkoutInformation = CheckoutInformation::create($requestData);
 
-        $checkoutInformation->ringkasan_belanja = json_decode($checkoutInformation->ringkasan_belanja, true);
+    $checkoutInformation->ringkasan_belanja = json_decode($checkoutInformation->ringkasan_belanja, true);
 
-        CheckoutHistory::create([
-            'id_member' => $checkoutInformation->id_member,
-            'ringkasan_belanja' => json_encode($checkoutInformation->ringkasan_belanja), // Encode to JSON
-            'total_harga' => $checkoutInformation->total_harga
-        ]);
+    CheckoutHistory::create([
+        'id_member' => $checkoutInformation->id_member,
+        'ringkasan_belanja' => json_encode($checkoutInformation->ringkasan_belanja), // Encode to JSON
+        'total_harga' => $checkoutInformation->total_harga
+    ]);
 
-        return response()->json(['data' => $checkoutInformation]);
+    return response()->json(['data' => $checkoutInformation]);
     }
 
     public function show($id)
