@@ -15,13 +15,17 @@ class CheckoutHistoryController extends Controller
     }
 
     public function show($id)
-    {
-        $checkoutHistory = CheckoutHistory::find($id);
-        if (!$checkoutHistory) {
-            return response()->json(['message' => 'Checkout history not found'], 404);
-        }
-        return response()->json(['data' => $checkoutHistory]);
+{
+    $checkoutHistory = CheckoutHistory::find($id);
+    
+    if (!$checkoutHistory) {
+        return response()->json(['message' => 'Checkout history not found'], 404);
     }
+
+    $checkoutHistory->ringkasan_belanja = json_encode($checkoutHistory->ringkasan_belanja, true);
+
+    return response()->json(['data' => $checkoutHistory]);
+}
 
     public function store(Request $request)
     {

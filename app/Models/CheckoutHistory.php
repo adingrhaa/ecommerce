@@ -11,6 +11,10 @@ class CheckoutHistory extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'ringkasan_belanja' => 'array', 
+    ];
+
     public function member()
     {
         return $this->belongsTo(Member::class);
