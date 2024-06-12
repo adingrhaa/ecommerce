@@ -187,16 +187,4 @@ class MemberController extends Controller
         return response()->json(['message' => 'Member has been unblocked successfully.']);
     }
 
-    public function checkoutHistory(Request $request)
-    {
-        // Ambil member yang sedang login
-        $member = $request->user();
-
-        // Ambil riwayat checkout milik member
-        $checkoutHistory = CheckoutInformation::where('id_member', $member->id)->get();
-
-        return response()->json([
-            'data' => $checkoutHistory
-        ]);
-    }
 }
