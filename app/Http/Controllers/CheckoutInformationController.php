@@ -94,11 +94,12 @@ class CheckoutInformationController extends Controller
     return response()->json(['data' => $checkoutinformation]);
 }
 
-
 public function update(Request $request, $id)
 {
+    // Temukan data CheckoutInformation yang akan diperbarui
     $checkoutInformation = CheckoutInformation::findOrFail($id);
 
+    // Validasi data yang diterima
     $validator = Validator::make($request->all(), [
         'fullname' => 'required',
         'email' => 'required',
@@ -116,12 +117,15 @@ public function update(Request $request, $id)
         'status' => 'in:dibuat,dikonfirmasi,dikirim,diterima,selesai'
     ]);
 
+    // Jika validasi gagal, kembalikan respon kesalahan
     if ($validator->fails()) {
         return response()->json($validator->errors(), 422);
     }
 
+    // Ambil data dari request
     $requestData = $request->all();
 
+    // Validasi dan ubah ringkasan belanja ke format yang benar
     $validatedRingkasanBelanja = array_map(function ($item) {
         return [
             'id_produk' => $item['id_produk'],
@@ -130,21 +134,28 @@ public function update(Request $request, $id)
         ];
     }, $request->ringkasan_belanja);
 
+    // Ubah ringkasan belanja menjadi format JSON
     $requestData['ringkasan_belanja'] = json_encode($validatedRingkasanBelanja);
 
+    // Update data CheckoutInformation
     $checkoutInformation->update($requestData);
 
-    // Simpan data ke CheckoutHistory
-    CheckoutHistory::create([
-        'id_member' => $checkoutInformation->id_member,
-        'ringkasan_belanja' => $validatedRingkasanBelanja, // Simpan langsung sebagai array
-        'total_harga' => $checkoutInformation->total_harga,
-        'status' => $checkoutInformation->status
-    ]);
+    // Update entri CheckoutHistory yang terkait
+    $checkoutHistory = CheckoutHistory::where('id_member', $checkoutInformation->id_member)
+                                      ->orderBy('created_at', 'desc')
+                                      ->first();
+    if ($checkoutHistory) {
+        $checkoutHistory->update([
+            'ringkasan_belanja' => $validatedRingkasanBelanja,
+            'total_harga' => $checkoutInformation->total_harga,
+            'status' => $checkoutInformation->status
+        ]);
+    }
 
     // Decode ringkasan_belanja dari string JSON ke array
     $ringkasanBelanjaArray = json_decode($checkoutInformation->ringkasan_belanja, true);
 
+    // Jika terjadi kesalahan pada decoding, kembalikan pesan kesalahan
     if (is_null($ringkasanBelanjaArray)) {
         return response()->json(['message' => 'Error decoding ringkasan_belanja field'], 500);
     }
@@ -152,11 +163,9 @@ public function update(Request $request, $id)
     // Update properti ringkasan_belanja dengan array
     $checkoutInformation->ringkasan_belanja = $ringkasanBelanjaArray;
 
-    // Respon
+    // Kembalikan respon
     return response()->json(['data' => $checkoutInformation]);
 }
-
-
 
     public function destroy(CheckoutInformation $checkoutinformation)
     {
