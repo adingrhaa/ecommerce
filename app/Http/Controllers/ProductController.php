@@ -46,7 +46,7 @@ class ProductController extends Controller
             'nama_barang' => 'required',
             'gambar' => 'required|image|mimes:jpg,png,webp',
             'deskripsi' => 'required',
-            'harga' => 'required',
+            'harga' => 'required|numeric|min:0',
             'bahan' => 'required',
             'tags' => 'required',
         ]);
@@ -96,7 +96,7 @@ class ProductController extends Controller
             'id_kategori' => 'required',
             'nama_barang' => 'required',
             'deskripsi' => 'required',
-            'harga' => 'required',
+            'harga' => 'required|numeric|min:0',
             'bahan' => 'required',
             'tags' => 'required',
         ]);
