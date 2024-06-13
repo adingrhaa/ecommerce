@@ -78,5 +78,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('checkout_histories', [CheckoutHistoryController::class, 'store']);
     Route::put('checkout_histories/{id}', [CheckoutHistoryController::class, 'update']);
     Route::delete('checkout_histories/{id}', [CheckoutHistoryController::class, 'destroy']);
+});
+
+Route::group(['middleware' => 'auth:api'], function() {
     Route::put('checkout_informations/{id}', [CheckoutInformationController::class, 'update']);
 });
