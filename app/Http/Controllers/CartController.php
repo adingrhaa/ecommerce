@@ -187,9 +187,10 @@ class CartController extends Controller
         $cart = Cart::find($id);
 
         if ($cart) {
-            if ($cart->gambar) {
-                File::delete(public_path('storage/images/' . $cart->gambar));
-            }
+            // Jika Anda ingin menghapus gambar, hapus komentar pada baris berikut
+            // if ($cart->gambar) {
+            //     File::delete(public_path('storage/images/' . $cart->gambar));
+            // }
 
             $cart->delete();
 
@@ -209,9 +210,10 @@ class CartController extends Controller
     
             if ($carts->isNotEmpty()) {
                 foreach ($carts as $cart) {
-                    if ($cart->gambar) {
-                        File::delete(public_path('storage/images/' . $cart->gambar));
-                    }
+                    // Jika Anda ingin menghapus gambar, hapus komentar pada baris berikut
+                    // if ($cart->gambar) {
+                    //     File::delete(public_path('storage/images/' . $cart->gambar));
+                    // }
                     $cart->delete();
                 }
                 return response()->json(['message' => 'Carts deleted successfully'], 200);
@@ -224,6 +226,7 @@ class CartController extends Controller
         }
     }
 }
+
 
 
 }
