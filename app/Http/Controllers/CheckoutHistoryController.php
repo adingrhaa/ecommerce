@@ -8,11 +8,30 @@ use Illuminate\Support\Facades\Validator;
 
 class CheckoutHistoryController extends Controller
 {
-    public function index()
-    {
+    public function index(Request $request)
+{
+    // Mengambil 'id_member' dari parameter query
+    $id_member = $request->query('id_member');
+
+    if ($id_member) {
+        // Jika 'id_member' disediakan, dapatkan riwayat checkout untuk anggota tersebut
+        $checkoutHistories = CheckoutHistory::where('id_member', $id_member)->get();
+
+        // Kembalikan hasil sebagai JSON
+        return response()->json([
+            'data' => $checkoutHistories
+        ]);
+    } else {
+        // Jika tidak ada parameter query atau id_member tidak disediakan, tampilkan semua data
         $checkoutHistories = CheckoutHistory::all();
-        return response()->json(['data' => $checkoutHistories]);
+
+        // Kembalikan semua data
+        return response()->json([
+            'data' => $checkoutHistories
+        ]);
     }
+}
+
 
     public function show($id)
 {
