@@ -40,13 +40,13 @@ class CheckoutInformationController extends Controller
             'total_harga' => 'required',
             'status' => 'in:dibuat,dikonfirmasi,dikirim,diterima,selesai'
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-    
+
         $requestData = $request->all();
-    
+
         $validatedRingkasanBelanja = array_map(function ($item) {
             return [
                 'id_produk' => $item['id_produk'],
@@ -54,29 +54,33 @@ class CheckoutInformationController extends Controller
                 'jumlah' => $item['jumlah']
             ];
         }, $request->ringkasan_belanja);
-    
+
         $requestData['ringkasan_belanja'] = json_encode($validatedRingkasanBelanja);
-    
+
         $checkoutInformation = CheckoutInformation::create($requestData);
-    
+
         // Simpan data ke CheckoutHistory
         CheckoutHistory::create([
             'id_member' => $checkoutInformation->id_member,
             'ringkasan_belanja' => $validatedRingkasanBelanja, // Simpan langsung sebagai array
             'total_harga' => $checkoutInformation->total_harga,
+            'payment_method' => $checkoutInformation->payment_method,
+            'biaya_pengiriman' => $checkoutInformation->biaya_pengiriman,
+            'biaya_admin' => $checkoutInformation->biaya_admin,
+            'delivery' => $checkoutInformation->delivery,
             'status' => $checkoutInformation->status
         ]);
-    
+
         // Decode ringkasan_belanja dari string JSON ke array
         $ringkasanBelanjaArray = json_decode($checkoutInformation->ringkasan_belanja, true);
-    
+
         if (is_null($ringkasanBelanjaArray)) {
             return response()->json(['message' => 'Error decoding ringkasan_belanja field'], 500);
         }
-    
+
         // Update properti ringkasan_belanja dengan array
         $checkoutInformation->ringkasan_belanja = $ringkasanBelanjaArray;
-    
+
         // Respon
         return response()->json(['data' => $checkoutInformation]);
     }
