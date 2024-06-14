@@ -10,26 +10,30 @@ class CheckoutHistoryController extends Controller
 {
     public function index(Request $request)
 {
-    // Mengambil 'id_member' dari parameter query
+    // Mengambil 'id_member' dan 'status' dari parameter query
     $id_member = $request->query('id_member');
+    $status = $request->query('status');
 
-    if ($id_member) {
-        // Jika 'id_member' disediakan, dapatkan riwayat checkout untuk anggota tersebut
+    // Deklarasi variabel untuk menyimpan hasil query
+    $checkoutHistories = null;
+
+    // Jika kedua parameter ada, cari berdasarkan keduanya
+    if ($id_member && $status) {
+        $checkoutHistories = CheckoutHistory::where('id_member', $id_member)
+                                            ->where('status', $status)
+                                            ->get();
+    } elseif ($id_member) {
+        // Jika hanya 'id_member' disediakan, cari berdasarkan id_member
         $checkoutHistories = CheckoutHistory::where('id_member', $id_member)->get();
-
-        // Kembalikan hasil sebagai JSON
-        return response()->json([
-            'data' => $checkoutHistories
-        ]);
     } else {
-        // Jika tidak ada parameter query atau id_member tidak disediakan, tampilkan semua data
+        // Jika tidak ada parameter query, tampilkan semua data
         $checkoutHistories = CheckoutHistory::all();
-
-        // Kembalikan semua data
-        return response()->json([
-            'data' => $checkoutHistories
-        ]);
     }
+
+    // Kembalikan hasil sebagai JSON
+    return response()->json([
+        'data' => $checkoutHistories
+    ]);
 }
 
 

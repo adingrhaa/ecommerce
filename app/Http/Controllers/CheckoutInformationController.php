@@ -62,6 +62,12 @@ class CheckoutInformationController extends Controller
         // Simpan data ke CheckoutHistory
         CheckoutHistory::create([
             'id_member' => $checkoutInformation->id_member,
+            'provinsi' => $checkoutInformation->provinsi,
+            'kota_kabupaten' => $checkoutInformation->kota_kabupaten,
+            'kecamatan' => $checkoutInformation->kecamatan,
+            'kode_pos' => $checkoutInformation->kode_pos,
+            'detail' => $checkoutInformation->detail,
+            'detail_lainnya' => $checkoutInformation->detail_lainnya,
             'ringkasan_belanja' => $validatedRingkasanBelanja, // Simpan langsung sebagai array
             'total_harga' => $checkoutInformation->total_harga,
             'payment_method' => $checkoutInformation->payment_method,
