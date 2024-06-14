@@ -62,6 +62,7 @@ class CheckoutInformationController extends Controller
         // Simpan data ke CheckoutHistory
         CheckoutHistory::create([
             'id_member' => $checkoutInformation->id_member,
+            'no_hp' => $checkoutInformation->no_hp,
             'provinsi' => $checkoutInformation->provinsi,
             'kota_kabupaten' => $checkoutInformation->kota_kabupaten,
             'kecamatan' => $checkoutInformation->kecamatan,

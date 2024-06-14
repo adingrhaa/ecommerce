@@ -14,10 +14,11 @@ class AddColumnsToCheckoutHistoriesTable extends Migration
     public function up()
     {
         Schema::table('checkout_histories', function (Blueprint $table) {
-            $table->string('provinsi')->after('delivery');
+            $table->string('no_hp')->after('delivery');
+            $table->string('provinsi')->after('no_hp');
             $table->string('kota_kabupaten')->after('provinsi');
             $table->string('kecamatan')->after('kota_kabupaten');
-            $table->string('kode_pos')->after('kecamatan');
+            $table->string('kode_pos')->nullable()->after('kecamatan');
             $table->string('detail')->nullable()->after('kode_pos');
             $table->string('detail_lainnya')->nullable()->after('detail');
         });
