@@ -11,6 +11,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ProductCountController;
@@ -82,4 +83,10 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::put('checkout_informations/{id}', [CheckoutInformationController::class, 'update']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/feedbacks', [FeedbackController::class, 'index']);
+    Route::post('/feedbacks', [FeedbackController::class, 'store']);
+    Route::get('/feedbacks', [FeedbackController::class, 'show']);
 });
