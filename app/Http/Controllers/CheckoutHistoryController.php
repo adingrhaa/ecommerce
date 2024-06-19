@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CheckoutHistory;
+use App\Models\CheckoutInformation;
 use Illuminate\Support\Facades\Validator;
 
 class CheckoutHistoryController extends Controller
@@ -73,29 +74,48 @@ class CheckoutHistoryController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Temukan data CheckoutHistory yang akan diperbarui
         $checkoutHistory = CheckoutHistory::find($id);
         if (!$checkoutHistory) {
             return response()->json(['message' => 'Checkout history not found'], 404);
         }
 
+        // Validasi data yang diterima
         $validator = Validator::make($request->all(), [
             'id_member' => 'required|exists:members,id',
             'ringkasan_belanja' => 'required|array',
             'total_harga' => 'required|numeric',
+            'status' => 'sometimes|in:dibuat,dikonfirmasi,dikirim,diterima,selesai' // Validasi untuk status
         ]);
 
+        // Jika validasi gagal, kembalikan respon kesalahan
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        // Ensure ringkasan_belanja is stored as JSON
+        // Ambil data dari request
         $requestData = $request->all();
+
+        // Ubah ringkasan belanja menjadi format JSON
         $requestData['ringkasan_belanja'] = json_encode($request->input('ringkasan_belanja'));
 
+        // Update data CheckoutHistory
         $checkoutHistory->update($requestData);
 
+        // Jika status ada dalam request, sinkronisasi status dengan CheckoutInformation
+        if (isset($requestData['status'])) {
+            $checkoutInformation = CheckoutInformation::where('id_member', $checkoutHistory->id_member)
+                                                    ->orderBy('created_at', 'desc')
+                                                    ->first();
+            if ($checkoutInformation) {
+                $checkoutInformation->update(['status' => $requestData['status']]);
+            }
+        }
+
+        // Kembalikan respon
         return response()->json(['data' => $checkoutHistory]);
     }
+
 
     public function destroy($id)
     {
