@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -111,5 +112,21 @@ class FeedbackController extends Controller
     public function destroy(Feedback $feedback)
     {
         //
+    }
+
+    public function getByProductId(Request $request, $productId)
+    {
+        // Convert productId to integer
+        $productId = (int) $productId;
+        
+        Log::info("Searching for productId: {$productId}");
+
+        $feedbacks = Feedback::whereRaw("JSON_CONTAINS(id_product, '[{$productId}]')")->get();
+        
+        Log::info("Found feedbacks: ", $feedbacks->toArray());
+
+        return response()->json([
+            'data' => $feedbacks 
+        ]);
     }
 }
