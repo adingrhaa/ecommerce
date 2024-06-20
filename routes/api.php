@@ -85,7 +85,9 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::put('checkout_informations/{id}', [CheckoutInformationController::class, 'update']);
 });
 
-
+// feedback 
 Route::post('/feedbacks', [FeedbackController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/feedbacks', [FeedbackController::class, 'index']);
 Route::get('/feedbacks', [FeedbackController::class, 'show']);
+Route::delete('/feedbacks/{feedback}', [FeedbackController::class, 'destroy']);
+Route::get('feedbacks/product/{productId}', [FeedbackController::class, 'getByProductId']);
