@@ -116,12 +116,12 @@ class FeedbackController extends Controller
 
     public function getByProductId(Request $request, $productId)
     {
-        // Convert productId to integer
-        $productId = (int) $productId;
+        // Convert productId to string
+        $productId = (string) $productId;
         
-        Log::info("Searching for productId: {$productId}");
+        Log::info("Searching for productId: '{$productId}'");
 
-        $feedbacks = Feedback::whereRaw("JSON_CONTAINS(id_product, '[{$productId}]')")->get();
+        $feedbacks = Feedback::whereRaw("JSON_CONTAINS(id_product, '[\"{$productId}\"]')")->get();
         
         Log::info("Found feedbacks: ", $feedbacks->toArray());
 
